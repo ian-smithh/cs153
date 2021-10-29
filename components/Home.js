@@ -1,4 +1,4 @@
-import React, { useState, useEffect, createContext } from "react";
+import React, { useState, useEffect, createContext, useContext } from "react";
 import { StyleSheet, View, FlatList, ScrollView, TouchableOpacity } from "react-native";
 import { parse } from "fast-xml-parser";
 import { Card, Title, Paragraph, Chip, Button, TextInput, useTheme } from "react-native-paper";
@@ -6,6 +6,7 @@ import { createNativeStackNavigator } from "@react-navigation/native-stack";
 import * as WebBrowser from "expo-web-browser";
 import { MaterialIcons, MaterialCommunityIcons } from "@expo/vector-icons";
 import { AlertsDisplay, AlertsSettings } from "./Alerts";
+import { PreferencesContext } from "../boot/Preferences";
 
 export const StoredArticles = createContext("default value");
 const HomeNavigator = createNativeStackNavigator();
@@ -25,17 +26,13 @@ export default function HomeStack() {
               <TouchableOpacity onPress={() => navigation.navigate("Alerts")} style={{ marginHorizontal: 10 }}>
                 <MaterialCommunityIcons name="bell" size={24} color={theme.colors.primary} />
               </TouchableOpacity>
-              <TouchableOpacity onPress={() => navigation.navigate("Settings")}>
+              <TouchableOpacity onPress={() => navigation.navigate("Settings Stack")}>
                 <MaterialIcons name="settings" size={24} color={theme.colors.primary} />
               </TouchableOpacity>
             </View>
           )
         })} />
       <HomeNavigator.Screen name="Alerts" component={AlertsDisplay} />
-      <HomeNavigator.Screen 
-        name="Alerts Settings" 
-        component={AlertsSettings} 
-        initialParams={{keywords: [], alertsOn: true, disableFetch: false}} />
     </HomeNavigator.Navigator>
   );
 }
@@ -45,6 +42,7 @@ function Home() {
   const [originalPatch, setOriginalPatch] = useState("");
   const [searchTerm, setSearchTerm] = useState("");
   const theme = useTheme();
+  const { userTheme, setUserTheme, userLoadArticles, setUserLoadArticles } = useContext(PreferencesContext);
 
   useEffect(() => {
     async function fetchRSS() {
@@ -53,8 +51,8 @@ function Home() {
         .then((textResponse) => {
           let obj = parse(textResponse);
           let rssData = obj.rss.channel.item;
-          setPatch(rssData.slice(0, 50));
-          setOriginalPatch(rssData.slice(0, 50));
+          setPatch(rssData.slice(0, userLoadArticles));
+          setOriginalPatch(rssData);
         })
         .catch((error) => {
           console.error(error);
@@ -78,7 +76,7 @@ function Home() {
   function handleSearch(text) {
     text = text.toLowerCase();
     if (text === "") {
-      setPatch(originalPatch);
+      setPatch(originalPatch.slice(0,userLoadArticles));
       setSearchTerm("");
     }
     else {
@@ -100,7 +98,7 @@ function Home() {
           <Paragraph>{item.description}</Paragraph>
         </Card.Content>
         <Card.Actions>
-          <Button onPress={() => openBrowser(item.link)}>Open</Button>
+          <Button icon="open-in-app" onPress={() => openBrowser(item.link)}>Open</Button>
         </Card.Actions>
       </Card>
     );
@@ -127,7 +125,7 @@ function Home() {
         </ScrollView>
         <FlatList
           data={patch}
-          extraData={searchTerm}
+          extraData={[userLoadArticles, searchTerm]}
           renderItem={(item) => renderArticle(item.item)}
           keyExtractor={(item, index) => index.toString()}
         />

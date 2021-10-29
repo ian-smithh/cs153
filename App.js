@@ -1,51 +1,61 @@
 import { StatusBar } from "expo-status-bar";
-import React, { createContext } from "react";
-import { TouchableOpacity, useColorScheme } from "react-native";
-import { NavigationContainer } from "@react-navigation/native";
+import React, { useState, useMemo } from "react";
+import { TouchableOpacity, Appearance } from "react-native";
+import {
+  NavigationContainer, DarkTheme as NavigationDarkTheme,
+  DefaultTheme as NavigationDefaultTheme,
+} from "@react-navigation/native";
 import { createNativeStackNavigator } from "@react-navigation/native-stack";
-import { MaterialIcons } from "@expo/vector-icons";
-import { DefaultTheme, Provider as PaperProvider } from "react-native-paper";
+import {
+  Provider as PaperProvider, DarkTheme as PaperDarkTheme,
+  DefaultTheme as PaperDefaultTheme,
+} from "react-native-paper";
+import merge from "deepmerge";
+
 import HomeStack from "./components/Home";
 import About from "./components/About";
 import Settings from "./components/Settings";
+import { PreferencesContext } from "./boot/Preferences";
+import ThemeEnum from "./enums/ThemeEnum";
+import LoadEnum from "./enums/LoadEnum";
 
 const Root = createNativeStackNavigator();
-export const ArticleStore = createContext();
+
+const CombinedDefaultTheme = merge(PaperDefaultTheme, NavigationDefaultTheme);
+const CombinedDarkTheme = merge(PaperDarkTheme, NavigationDarkTheme);
 
 export default function App() {
-  const theme = {
-    ...DefaultTheme,
-    dark: useColorScheme() === "dark",
-    colors: {
-      ...DefaultTheme.colors,
-    },
-  };
+  const [userTheme, setUserTheme] = useState(ThemeEnum.AUTO);
+  const [userLoadArticles, setUserLoadArticles] = useState(LoadEnum.XS);
+  const systemSetting = Appearance.getColorScheme();
+
+  let theme = userTheme === ThemeEnum.AUTO ? (systemSetting === "dark" ? CombinedDarkTheme : CombinedDefaultTheme) : userTheme === ThemeEnum.DARK ? CombinedDarkTheme : CombinedDefaultTheme;
+
+  const preferences = useMemo(
+    () => ({
+      userTheme,
+      setUserTheme,
+      userLoadArticles,
+      setUserLoadArticles
+    }),
+    [userTheme, setUserTheme, userLoadArticles, setUserLoadArticles]
+  );
 
   return (
-    <NavigationContainer>
+    <PreferencesContext.Provider value={preferences}>
       <PaperProvider theme={theme}>
-        <StatusBar style="auto" />
-        <Root.Navigator
-          screenOptions={{
-            headerTintColor: theme.colors.primary
-          }}
-        >
-          <Root.Screen name="Home Stack" component={HomeStack} options={{headerShown: false}}/>
-          <Root.Screen name="About" component={About}
-            headerMode={"screen"}
-          />
-          <Root.Screen name="Settings" component={Settings}
-            headerMode={"screen"}
-            options={({ navigation }) => ({
-              headerRight: () => (
-                <TouchableOpacity onPress={() => navigation.navigate("About")}>
-                  <MaterialIcons name="info" size={24} color={theme.colors.primary} />
-                </TouchableOpacity>
-              )
-            })}
-          />
-        </Root.Navigator>
+        <NavigationContainer theme={theme}>
+          <StatusBar style={theme === CombinedDarkTheme ? "light" : "dark"} />
+          <Root.Navigator
+            screenOptions={{
+              headerTintColor: theme.colors.primary
+            }}
+          >
+            <Root.Screen name="Home Stack" component={HomeStack} options={{ headerShown: false }} />
+            <Root.Screen name="Settings Stack" component={Settings} options={{headerShown: false}} />
+          </Root.Navigator>
+        </NavigationContainer>
       </PaperProvider>
-    </NavigationContainer>
+    </PreferencesContext.Provider>
   );
 }

@@ -1,15 +1,46 @@
-import React, { useState, useEffect } from "react";
-import { StyleSheet, View, Image } from "react-native";
-import { Button, Menu } from "react-native-paper";
+import React, { useState, useEffect, useContext } from "react";
+import { StyleSheet, View, Image, TouchableOpacity } from "react-native";
+import { Button, Menu, useTheme } from "react-native-paper";
+import { MaterialIcons } from "@expo/vector-icons";
 const logo = require("../assets/Microsoft_logo.svg.png");
 import ThemeEnum from "../enums/ThemeEnum";
 import LoadEnum from "../enums/LoadEnum";
 import { useNavigation } from "@react-navigation/native";
 import AsyncStorage from "@react-native-async-storage/async-storage";
 import AlertEnum from "../enums/AlertEnum";
+import { PreferencesContext } from "../boot/Preferences";
+import { createNativeStackNavigator } from "@react-navigation/native-stack";
+import About from "./About";
+import { AlertsSettings } from "./Alerts";
 
-export default function Settings() {
-  const [theme, setTheme] = useState(ThemeEnum.LIGHT);
+const SettingsNavigator = createNativeStackNavigator();
+
+export default function SettingsStack() {
+  const theme = useTheme();
+  return (
+    <SettingsNavigator.Navigator screenOptions={{
+      headerShown: true,
+    }}>
+      <SettingsNavigator.Screen
+        name="Settings"
+        component={Settings}
+        options={({ navigation }) => ({
+          headerRight: () => (
+            <TouchableOpacity onPress={() => navigation.navigate("About")}>
+              <MaterialIcons name="info" size={24} color={theme.colors.primary} />
+            </TouchableOpacity>
+          )
+        })}
+      />
+      <SettingsNavigator.Screen name="About" component={About} />
+      <SettingsNavigator.Screen name="Alerts Settings" component={AlertsSettings}
+        initialParams={{ keywords: [], alertsOn: true, disableFetch: false }} />
+    </SettingsNavigator.Navigator>
+  );
+}
+
+function Settings() {
+  const { userTheme, setUserTheme, userLoadArticles, setUserLoadArticles } = useContext(PreferencesContext);
   const [toLoad, setToLoad] = useState(50);
   const [keywords, setKeywords] = useState(["security", "kb"]);
   const [alertsOn, setAlertsOn] = useState(true);
@@ -19,17 +50,17 @@ export default function Settings() {
 
   useEffect(() => {
     async function loadSettings() {
-      let loaded_enabled = await AsyncStorage.getItem(AlertEnum.USER_ENABLE_DISABLE_STATE)
+      await AsyncStorage.getItem(AlertEnum.USER_ENABLE_DISABLE_STATE)
         .then((result) => {
-          console.log(result);
-          if(result!== undefined && result!==null){
+          //console.log(result);
+          if (result !== undefined && result !== null) {
             setAlertsOn(result === "true" ? true : false);
           }
         });
-      let loaded_keywords = await AsyncStorage.getItem(AlertEnum.USER_ALERT_KEYWORDS)
+      await AsyncStorage.getItem(AlertEnum.USER_ALERT_KEYWORDS)
         .then((result) => {
-          console.log(result);
-          if(result !== undefined && result !== null){
+          //console.log(result);
+          if (result !== undefined && result !== null) {
             setKeywords(JSON.parse(result));
           }
         });
@@ -38,7 +69,7 @@ export default function Settings() {
   }, []);
 
   async function purge() {
-    await AsyncStorage.clear();
+    await AsyncStorage.clear().then((res) => console.log("Cleared async storage result was", res));
   }
 
   return (
@@ -50,9 +81,9 @@ export default function Settings() {
           <Button contentStyle={styles.settingsButtonInner} style={styles.settingsButton} mode="contained" icon="theme-light-dark" onPress={() => setThemeMenuVisible(true)}>Set theme</Button>
         }
       >
-        <Menu.Item onPress={() => { setTheme(ThemeEnum.LIGHT); }} title={ThemeEnum.LIGHT} />
-        <Menu.Item onPress={() => { setTheme(ThemeEnum.DARK); }} title={ThemeEnum.DARK} />
-        <Menu.Item onPress={() => { setTheme(ThemeEnum.AUTO); }} title={ThemeEnum.AUTO} />
+        <Menu.Item onPress={() => { setUserTheme(ThemeEnum.LIGHT); }} title={ThemeEnum.LIGHT} />
+        <Menu.Item onPress={() => { setUserTheme(ThemeEnum.DARK); }} title={ThemeEnum.DARK} />
+        <Menu.Item onPress={() => { setUserTheme(ThemeEnum.AUTO); }} title={ThemeEnum.AUTO} />
       </Menu>
       <Menu
         visible={loadMenuVisible}
@@ -65,17 +96,18 @@ export default function Settings() {
             icon="numeric"
             onPress={() => setLoadMenuVisible(true)}>Set number of articles to load</Button>
         }>
-        <Menu.Item onPress={() => setToLoad(LoadEnum.SMALL)} title={LoadEnum.SMALL} />
-        <Menu.Item onPress={() => setToLoad(LoadEnum.MED)} title={LoadEnum.MED} />
-        <Menu.Item onPress={() => setToLoad(LoadEnum.LARGE)} title={LoadEnum.LARGE} />
-        <Menu.Item onPress={() => setToLoad(LoadEnum.XL)} title={LoadEnum.XL} />
+        <Menu.Item onPress={() => setUserLoadArticles(LoadEnum.XS)} title={LoadEnum.XS} />
+        <Menu.Item onPress={() => setUserLoadArticles(LoadEnum.SMALL)} title={LoadEnum.SMALL} />
+        <Menu.Item onPress={() => setUserLoadArticles(LoadEnum.MED)} title={LoadEnum.MED} />
+        <Menu.Item onPress={() => setUserLoadArticles(LoadEnum.LARGE)} title={LoadEnum.LARGE} />
+        <Menu.Item onPress={() => setUserLoadArticles(LoadEnum.XL)} title={LoadEnum.XL} />
       </Menu>
       <Button
         contentStyle={styles.settingsButtonInner}
         style={styles.settingsButton}
         mode="contained"
         icon="bell-alert"
-        onPress={() => navigation.navigate("Home Stack",
+        onPress={() => navigation.navigate("Settings Stack",
           {
             screen: "Alerts Settings",
             params: { keywords: keywords, alertsOn: alertsOn, disableFetch: true }

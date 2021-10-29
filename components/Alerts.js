@@ -174,7 +174,7 @@ export function AlertsSettings({ route, navigation }) {
       <List.Item
         title={"Alerts"}
         description={"Enable or disable alerts"}
-        right={props => <Switch value={alertsOn} onValueChange={(value) => toggleAlerts(value)} />}
+        right={props => <Switch value={alertsOn} onValueChange={(value) => toggleAlerts(value)} theme={theme} color={theme.colors.primary} />}
       >
       </List.Item>
       <FlatList
@@ -185,9 +185,17 @@ export function AlertsSettings({ route, navigation }) {
         extraData={showNewAlertBox}
       />
       <FAB
-        style={styles.fab}
+        style={{
+          position: "absolute",
+          margin: 16,
+          right: 0,
+          bottom: 0,
+          color: theme.colors.primary,
+          backgroundColor: theme.colors.primary,
+        }}
         icon="plus"
         onPress={() => onFAB()}
+        theme={theme}
       />
       <Portal>
         <Dialog visible={queryEnableAlerts} onDismiss={hideQueryEnableAlerts}>
@@ -257,7 +265,7 @@ export function AlertsDisplay({ articles }) {
 
   return (
     <View style={[styles.container, { backgroundColor: theme.colors.background }]}>
-      <Button contentStyle={styles.settingsButtonInner} style={styles.settingsButton} mode="contained" icon="bell-alert" onPress={() => navigation.navigate("Alerts Settings")}>Edit Alerts</Button>
+      <Button contentStyle={styles.settingsButtonInner} style={styles.settingsButton} mode="contained" icon="bell-alert" onPress={() => navigation.navigate("Settings Stack", { screen: "Alerts Settings" })}>Edit Alerts</Button>
       <FlatList
         data={articles}
         keyExtractor={(item, index) => index.toString()}
