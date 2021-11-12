@@ -5,8 +5,9 @@ import { Card, Title, Paragraph, Chip, Button, TextInput, useTheme } from "react
 import { createNativeStackNavigator } from "@react-navigation/native-stack";
 import * as WebBrowser from "expo-web-browser";
 import { MaterialIcons, MaterialCommunityIcons } from "@expo/vector-icons";
-import { AlertsDisplay, AlertsSettings } from "./Alerts";
+import { AlertsDisplay } from "./Alerts";
 import { PreferencesContext } from "../boot/Preferences";
+import HomeSort from "../enums/SortEnum";
 
 export const StoredArticles = createContext("default value");
 const HomeNavigator = createNativeStackNavigator();
@@ -41,6 +42,7 @@ function Home() {
   const [patch, setPatch] = useState("");
   const [originalPatch, setOriginalPatch] = useState("");
   const [searchTerm, setSearchTerm] = useState("");
+  const [sort, setSort] = useState("");
   const theme = useTheme();
   const { userTheme, setUserTheme, userLoadArticles, setUserLoadArticles } = useContext(PreferencesContext);
 
@@ -76,7 +78,7 @@ function Home() {
   function handleSearch(text) {
     text = text.toLowerCase();
     if (text === "") {
-      setPatch(originalPatch.slice(0,userLoadArticles));
+      setPatch(originalPatch.slice(0, userLoadArticles));
       setSearchTerm("");
     }
     else {
@@ -117,11 +119,26 @@ function Home() {
           right={<TextInput.Icon name="filter-variant-remove" onPress={() => handleSearch("")} />}
         />
         <ScrollView contentContainerStyle={styles.chipContainer} horizontal={true}>
-          <Chip icon="calendar-today" style={styles.chip}>Today</Chip>
-          <Chip icon="calendar-week" style={styles.chip}>This week</Chip>
-          <Chip icon="calendar-month" style={styles.chip}>This month</Chip>
-          <Chip icon="help-circle" style={styles.chip}>Support articles</Chip>
-          <Chip icon="update" style={styles.chip}>KB articles</Chip>
+          <Chip icon="calendar-today" style={styles.chip} 
+            onPress={()=> setSort(HomeSort.DATE_TODAY)}
+            onClose={()=> setSort("")}
+            selected={sort === HomeSort.DATE_TODAY}>Today</Chip>
+          <Chip icon="calendar-week" style={styles.chip} 
+            onPress={() => setSort(HomeSort.DATE_WEEK)}
+            onClose={()=> setSort("")}
+            selected={sort === HomeSort.DATE_WEEK}>This week</Chip>
+          <Chip icon="calendar-month" style={styles.chip} 
+            onPress={() => setSort(HomeSort.DATE_MONTH)}
+            onClose={()=> setSort("")}
+            selected={sort === HomeSort.DATE_MONTH}>This month</Chip>
+          <Chip icon="help-circle" style={styles.chip} 
+            onPress={() => setSort(HomeSort.CONTENT_HELP)}
+            onClose={()=> setSort("")}
+            selected={sort === HomeSort.CONTENT_HELP}>Support articles</Chip>
+          <Chip icon="update" style={styles.chip} 
+            onPress={() => setSort(HomeSort.CONTENT_UPDATE)}
+            onClose={()=> setSort("")}
+            selected={sort === HomeSort.CONTENT_UPDATE}>KB articles</Chip>
         </ScrollView>
         <FlatList
           data={patch}
