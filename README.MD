@@ -10,7 +10,7 @@ A feed of every KB article Microsoft has ever published, with filtering and sear
  - Easy to use filtering and search
 
 ## Why
-Good question. A sane person would simply use the website or Google. However, having an app is convenient.
+Quickly access nearly every KB article about Windows Microsoft has ever published in a lightweight app, with search, alerts, and advanced filtering features. Featuring a beautiful, Material Design UI, Microsoft KB Viewer is designed to be lightweight and speedy while not compromising on functionality. Honestly, the app is more of an excersise than an actual product. Any sane person should just use [Microsoft's support website](https://support.microsoft.com/).
 
 ## Technologies Used
  - [Expo 41](https://docs.expo.dev/)
