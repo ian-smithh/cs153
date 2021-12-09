@@ -1,5 +1,5 @@
 /* eslint-disable react/prop-types */
-import React, { useState, useEffect, useContext } from "react";
+import React, { useState, useEffect } from "react";
 import { Button, TextInput, Switch, useTheme, List, FAB, Dialog, Portal, IconButton, Snackbar } from "react-native-paper";
 import AsyncStorage from "@react-native-async-storage/async-storage";
 import { View, StyleSheet, FlatList, Text } from "react-native";
@@ -17,6 +17,7 @@ export function AlertsSettings({ route, navigation }) {
   const [queryEnableAlerts, setQueryEnableAlerts] = useState(false);
   const theme = useTheme();
   const navAlertsOn = route.params.alertsOn;
+  // eslint-disable-next-line no-unused-vars
   const navDisableFetch = route.params.disableFetch;
   const navKeywords = route.params.keywords;
 

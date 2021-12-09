@@ -40,7 +40,9 @@ export default function SettingsStack() {
 }
 
 function Settings() {
+  // eslint-disable-next-line no-unused-vars
   const { userTheme, setUserTheme, userLoadArticles, setUserLoadArticles } = useContext(PreferencesContext);
+  // eslint-disable-next-line no-unused-vars
   const [toLoad, setToLoad] = useState(50);
   const [keywords, setKeywords] = useState(["security", "kb"]);
   const [alertsOn, setAlertsOn] = useState(true);

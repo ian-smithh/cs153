@@ -44,6 +44,7 @@ function Home() {
   const [searchTerm, setSearchTerm] = useState("");
   const [sort, setSort] = useState("");
   const theme = useTheme();
+  // eslint-disable-next-line no-unused-vars
   const { userTheme, setUserTheme, userLoadArticles, setUserLoadArticles } = useContext(PreferencesContext);
 
   useEffect(() => {

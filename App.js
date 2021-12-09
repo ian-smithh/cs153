@@ -1,6 +1,6 @@
 import { StatusBar } from "expo-status-bar";
 import React, { useState, useMemo } from "react";
-import { TouchableOpacity, Appearance } from "react-native";
+import { Appearance } from "react-native";
 import {
   NavigationContainer, DarkTheme as NavigationDarkTheme,
   DefaultTheme as NavigationDefaultTheme,
@@ -13,7 +13,6 @@ import {
 import merge from "deepmerge";
 
 import HomeStack from "./components/Home";
-import About from "./components/About";
 import Settings from "./components/Settings";
 import { PreferencesContext } from "./boot/Preferences";
 import ThemeEnum from "./enums/ThemeEnum";
@@ -52,7 +51,7 @@ export default function App() {
             }}
           >
             <Root.Screen name="Home Stack" component={HomeStack} options={{ headerShown: false }} />
-            <Root.Screen name="Settings Stack" component={Settings} options={{headerShown: false}} />
+            <Root.Screen name="Settings Stack" component={Settings} options={{ headerShown: false }} />
           </Root.Navigator>
         </NavigationContainer>
       </PaperProvider>

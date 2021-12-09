@@ -3,7 +3,7 @@ const HomeSort ={
   DATE_WEEK: "sortWeek",
   DATE_MONTH: "sortMonth",
   CONTENT_HELP: "sortHelp",
-  CONTENT_UPDATE: "sortUpdte"
+  CONTENT_UPDATE: "sortUpdate"
 };
 
 module.exports = HomeSort;
