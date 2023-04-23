@@ -56,7 +56,7 @@ function Settings() {
         .then((result) => {
           //console.log(result);
           if (result !== undefined && result !== null) {
-            setAlertsOn(result === "true" ? true : false);
+            setAlertsOn(result === "true");
           }
         });
       await AsyncStorage.getItem(AlertEnum.USER_ALERT_KEYWORDS)

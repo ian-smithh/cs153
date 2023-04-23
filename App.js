@@ -1,11 +1,11 @@
-import { StatusBar } from "expo-status-bar";
-import React, { useState, useMemo } from "react";
-import { Appearance } from "react-native";
+import {StatusBar} from "expo-status-bar";
+import React, {useState, useMemo} from "react";
+import {Appearance} from "react-native";
 import {
   NavigationContainer, DarkTheme as NavigationDarkTheme,
   DefaultTheme as NavigationDefaultTheme,
 } from "@react-navigation/native";
-import { createNativeStackNavigator } from "@react-navigation/native-stack";
+import {createNativeStackNavigator} from "@react-navigation/native-stack";
 import {
   Provider as PaperProvider, DarkTheme as PaperDarkTheme,
   DefaultTheme as PaperDefaultTheme,
@@ -14,7 +14,7 @@ import merge from "deepmerge";
 
 import HomeStack from "./components/Home";
 import Settings from "./components/Settings";
-import { PreferencesContext } from "./boot/Preferences";
+import {PreferencesContext} from "./boot/Preferences";
 import ThemeEnum from "./enums/ThemeEnum";
 import LoadEnum from "./enums/LoadEnum";
 
@@ -44,14 +44,14 @@ export default function App() {
     <PreferencesContext.Provider value={preferences}>
       <PaperProvider theme={theme}>
         <NavigationContainer theme={theme}>
-          <StatusBar style={theme === CombinedDarkTheme ? "light" : "dark"} />
+          <StatusBar style={theme === CombinedDarkTheme ? "light" : "dark"}/>
           <Root.Navigator
             screenOptions={{
               headerTintColor: theme.colors.primary
             }}
           >
-            <Root.Screen name="Home Stack" component={HomeStack} options={{ headerShown: false }} />
-            <Root.Screen name="Settings Stack" component={Settings} options={{ headerShown: false }} />
+            <Root.Screen name="Home Stack" component={HomeStack} options={{headerShown: false}}/>
+            <Root.Screen name="Settings Stack" component={Settings} options={{headerShown: false}}/>
           </Root.Navigator>
         </NavigationContainer>
       </PaperProvider>

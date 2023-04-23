@@ -46,8 +46,8 @@ export function AlertsSettings({ route, navigation }) {
 
   /**
    * Render a keyword alert item.
-   * @param {*} item 
-   * @returns 
+   * @param {*} item
+   * @returns
    */
   function renderKeywordItem(item) {
     return (
@@ -60,7 +60,7 @@ export function AlertsSettings({ route, navigation }) {
 
   /**
    * What to render when the array is empty.
-   * @returns 
+   * @returns
    */
   function renderEmpty() {
     return (
@@ -109,7 +109,7 @@ export function AlertsSettings({ route, navigation }) {
 
   /**
    * Delete an alert keyword from the array.
-   * @param {*} alert 
+   * @param {*} alert
    */
   async function removeAlert(alert) {
     let newKeywords = keywords;
@@ -266,7 +266,12 @@ export function AlertsDisplay({ articles }) {
 
   return (
     <View style={[styles.container, { backgroundColor: theme.colors.background }]}>
-      <Button contentStyle={styles.settingsButtonInner} style={styles.settingsButton} mode="contained" icon="bell-alert" onPress={() => navigation.navigate("Settings Stack", { screen: "Alerts Settings" })}>Edit Alerts</Button>
+      <Button
+        contentStyle={styles.settingsButtonInner}
+        style={styles.settingsButton}
+        mode="contained"
+        icon="bell-alert"
+        onPress={() => navigation.navigate("Settings Stack", { screen: "Alerts Settings" })}>Edit Alerts</Button>
       <FlatList
         data={articles}
         keyExtractor={(item, index) => index.toString()}
